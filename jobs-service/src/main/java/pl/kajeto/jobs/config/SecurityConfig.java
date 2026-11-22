@@ -1,5 +1,6 @@
 package pl.kajeto.jobs.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -13,7 +14,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
   @Bean
-  SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  SecurityFilterChain securityFilterChain(HttpSecurity http, ObjectMapper objectMapper)
+      throws Exception {
     http.csrf(csrf -> csrf.disable())
         .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(
@@ -24,9 +26,20 @@ public class SecurityConfig {
                     .permitAll()
                     .anyRequest()
                     .authenticated())
+        .exceptionHandling(
+            ex ->
+                ex.authenticationEntryPoint(
+                        ProblemDetailsSecurityHandlers.authenticationEntryPoint(objectMapper))
+                    .accessDeniedHandler(
+                        ProblemDetailsSecurityHandlers.accessDeniedHandler(objectMapper)))
         .oauth2ResourceServer(
             oauth ->
-                oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
+                oauth
+                    .authenticationEntryPoint(
+                        ProblemDetailsSecurityHandlers.authenticationEntryPoint(objectMapper))
+                    .accessDeniedHandler(
+                        ProblemDetailsSecurityHandlers.accessDeniedHandler(objectMapper))
+                    .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
     return http.build();
   }
 
