@@ -90,7 +90,7 @@ With the `dev-worker` token the same call returns `403`.
 
 ## Decisions
 
-See [docs/adr](docs/adr): 0001 architecture style, 0002 message broker, 0003 authentication, 0004 deployment, 0005 versions, 0006 data stores, 0007 repository layout.
+See [docs/adr](docs/adr): 0001 architecture style, 0002 message broker, 0003 authentication, 0004 deployment, 0005 versions, 0006 data stores, 0007 repository layout, 0008 multi-tenancy, 0009 money, 0010 offline-ready data model.
 
 ## Roadmap
 
